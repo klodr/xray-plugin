@@ -1,0 +1,61 @@
+# CodeRabbit configuration for the klodr fork of teddysun/xray-plugin.
+# Docs: https://docs.coderabbit.ai/guides/configure-coderabbit
+#
+# Changes are reviewed in PRs inside this fork (base: refactor) before they
+# are proposed upstream. CodeRabbit must NOT push commits to this repository:
+# never use `@coderabbitai apply suggestions` / `auto_commit`, GitHub's
+# "Commit suggestion" button, or any "Finishing Touches" action.
+
+language: en-US
+early_access: false
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  in_progress_fortune: false
+  review_status: true
+  collapse_walkthrough: false
+  abort_on_close: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - refactor
+
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+
+  pre_merge_checks:
+    docstrings:
+      mode: "off"
+    title:
+      # Upstream does not use Conventional Commits; titles follow its style.
+      mode: "off"
+    override_requested_reviewers_only: true
+
+  path_instructions:
+    - path: "internal/server/**"
+      instructions: |
+        Builds the Xray-core configuration for every transport (websocket,
+        grpc, hysteria) on the client and server sides. Check every field
+        mapping against the Xray-core version pinned in go.mod, the TLS
+        handling, and that no plugin option silently loses its effect.
+    - path: "internal/config/**"
+      instructions: |
+        SIP003 (SS_REMOTE_*, SS_LOCAL_*, SS_PLUGIN_OPTIONS) and command-line
+        option parsing. In server mode the plugin listens on SS_REMOTE and
+        forwards to SS_LOCAL (the local port of ss-server).
+    - path: "go.mod"
+      instructions: |
+        Dependency bumps must keep govulncheck clean and stay the smallest
+        set of changes that achieves it.
+
+chat:
+  auto_reply: true
+  art: false
